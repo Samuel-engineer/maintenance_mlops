@@ -1,0 +1,59 @@
+# ─── Données ───────────────────────────────────────────────────────────────
+data:
+  kaggle_dataset: "stephanmatzka/predictive-maintenance-dataset-ai4i-2020"
+  kaggle_file: "ai4i2020.csv"
+  index_col: "UDI"
+  failure_types: ["TWF", "HDF", "PWF", "OSF", "RNF"]
+  test_size: 0.2
+  random_state: 42
+
+# ─── Feature engineering ───────────────────────────────────────────────────
+features:
+  raw:
+    - "Air temperature [K]"
+    - "Process temperature [K]"
+    - "Rotational speed [rpm]"
+    - "Torque [Nm]"
+    - "Tool wear [min]"
+  engineered:
+    - "power_W"
+    - "temp_diff_K"
+    - "wear_torque"
+    - "type_quality"
+
+# ─── Stage 1 — Détection binaire ───────────────────────────────────────────
+stage1:
+  model: "GradientBoostingClassifier"
+  params:
+    n_estimators: 300
+    learning_rate: 0.05
+    max_depth: 4
+    subsample: 0.8
+    random_state: 42
+  smote:
+    random_state: 42
+  cv_folds: 5
+  threshold_beta: 2          # F-beta pour optimisation du seuil (F2 = recall-focused)
+
+# ─── Stage 2 — Diagnostic multi-label ──────────────────────────────────────
+stage2:
+  model: "RandomForestClassifier"
+  params:
+    n_estimators: 300
+    class_weight: "balanced"
+    random_state: 42
+    n_jobs: -1
+
+# ─── MLflow ────────────────────────────────────────────────────────────────
+# Seules les constantes applicatives (noms, expérience) sont ici.
+# Les valeurs dépendantes de l'environnement (URI, alias) viennent des
+# variables d'environnement MLFLOW_TRACKING_URI et MODEL_ALIAS (voir .env.example).
+mlflow:
+  experiment_name: "predictive_maintenance"
+  registered_model_stage1: "maintenance_stage1"
+  registered_model_stage2: "maintenance_stage2"
+
+# ─── Artefacts locaux (utilisés par les scripts d'entraînement) ────────────
+artifacts:
+  models_dir: "artifacts/models"
+  mlruns_dir: "mlruns"
