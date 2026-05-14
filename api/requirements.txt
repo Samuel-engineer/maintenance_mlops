@@ -1,0 +1,21 @@
+# ── API ───────────────────────────────────────────────────────────────────
+fastapi>=0.111.0
+uvicorn[standard]>=0.29.0
+pydantic>=2.7.0
+pydantic-settings>=2.3.0
+
+# ── ML runtime ────────────────────────────────────────────────────────────
+scikit-learn>=1.4.0
+imbalanced-learn>=0.12.0
+numpy>=1.26.0
+pandas>=2.2.0
+joblib>=1.4.0
+
+# ── Data ──────────────────────────────────────────────────────────────────
+kagglehub>=0.2.0
+
+# ── MLflow (client uniquement — le server tourne dans son propre conteneur) ─
+mlflow>=3.12.0
+
+# ── Config ────────────────────────────────────────────────────────────────
+pyyaml>=6.0.1
